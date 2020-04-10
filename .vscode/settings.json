@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "devicetree.h": "c",
+        "device.h": "c",
+        "kernel.h": "c",
+        "gpio.h": "c",
+        "devicetree_unfixed.h": "c",
+        "zephyr.h": "c",
+        "kernel_includes.h": "c",
+        "syscall.h": "c"
+    }
+}

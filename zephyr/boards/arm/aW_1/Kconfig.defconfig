@@ -1,0 +1,7 @@
+
+if BOARD_AW_1
+
+config BOARD
+	default "aW_1"
+
+endif # BOARD_AW_1

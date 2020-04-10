@@ -1,0 +1,3 @@
+config BOARD_AW_1
+	bool "aW_1"
+	depends on SOC_NRF52832_QFAA

@@ -1,0 +1,34 @@
+// AUTOMATICALLY GENERATED FILE. PLEASE DO NOT MODIFY IT MANUALLY
+
+// PIO Unified Debugger
+//
+// Documentation: https://docs.platformio.org/page/plus/debugging.html
+// Configuration: https://docs.platformio.org/page/projectconf/section_env_debug.html
+
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "platformio-debug",
+            "request": "launch",
+            "name": "PIO Debug",
+            "executable": "c:/Users/Jan/Git/nrf52-zephyr-keyboard/.pio/build/aW_1/firmware.elf",
+            "toolchainBinDir": "C:/Users/Jan/.platformio/packages/toolchain-gccarmnoneeabi/bin",
+            "svdPath": "C:/Users/Jan/.platformio/platforms/nordicnrf52/misc/svd/nrf52.svd",
+            "preLaunchTask": {
+                "type": "PlatformIO",
+                "task": "Pre-Debug"
+            },
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "type": "platformio-debug",
+            "request": "launch",
+            "name": "PIO Debug (skip Pre-Debug)",
+            "executable": "c:/Users/Jan/Git/nrf52-zephyr-keyboard/.pio/build/aW_1/firmware.elf",
+            "toolchainBinDir": "C:/Users/Jan/.platformio/packages/toolchain-gccarmnoneeabi/bin",
+            "svdPath": "C:/Users/Jan/.platformio/platforms/nordicnrf52/misc/svd/nrf52.svd",
+            "internalConsoleOptions": "openOnSessionStart"
+        }
+    ]
+}
