@@ -1,7 +1,7 @@
 #include <vector>
 #include <bluetooth/conn.h>
 
-void hid_init();
+void hid_init(void);
 
 void notify_keycodes(bt_conn *conn, std::vector<uint8_t> keycodes, std::vector<uint8_t> modifiers);
 

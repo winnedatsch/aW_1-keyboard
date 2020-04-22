@@ -6,6 +6,7 @@
 #include <array>
 #include <string>
 #include <vector>
+#include <settings/settings.h>
 
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/hci.h>
@@ -13,7 +14,7 @@
 #include <bluetooth/uuid.h>
 #include <bluetooth/gatt.h>
 #include <usb_hid_keys.h>
-#include <hid.h>
+#include "hid.h"
 
 
 namespace {
@@ -79,13 +80,20 @@ void bt_ready(int err) {
 		return;
 	}
 
+	printk("Advertising attempt\n");
 	hid_init();
+
+	if (IS_ENABLED(CONFIG_SETTINGS)) {
+		settings_load();
+	}
 	
 	int adv_err = bt_le_adv_start(&advertising_parameters, advertising_data, ARRAY_SIZE(advertising_data), NULL, 0);
 
 	if(adv_err) {
 		printk("Bluetooth adv failed to start");
 		return;
+	} else {
+		printk("Advertising succeeded!\n");
 	}
 }
 
