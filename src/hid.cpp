@@ -1,6 +1,7 @@
 #include <zephyr/types.h>
 #include <stddef.h>
-#include <string.h>
+#include <string>
+#include <array>
 #include <errno.h>
 #include <sys/printk.h>
 #include <sys/byteorder.h>
@@ -54,6 +55,7 @@ static uint8_t report_map[] = {
 	0x05, 0x01,       // Usage Page (Generic Desktop)
     0x09, 0x06,       // Usage (Keyboard)
     0xA1, 0x01,       // Collection (Application)
+    0x85, 0x01,       // Report ID (1)
     0x05, 0x07,       // Usage Page (Key Codes)
     0x19, 0xe0,       // Usage Minimum (224)
     0x29, 0xe7,       // Usage Maximum (231)
@@ -65,7 +67,7 @@ static uint8_t report_map[] = {
 
     0x95, 0x01,       // Report Count (1)
     0x75, 0x08,       // Report Size (8)
-    0x81, 0x01,       // Input (Constant) reserved byte(1)
+    0x81, 0x03,       // Input (Constant) reserved byte(1)
 
     0x95, 0x05,       // Report Count (5)
     0x75, 0x01,       // Report Size (1)
@@ -75,7 +77,7 @@ static uint8_t report_map[] = {
     0x91, 0x02,       // Output (Data, Variable, Absolute), Led report
     0x95, 0x01,       // Report Count (1)
     0x75, 0x03,       // Report Size (3)
-    0x91, 0x01,       // Output (Data, Variable, Absolute), Led report padding
+    0x91, 0x03,       // Output (Data, Variable, Absolute), Led report padding
 
     0x95, 0x06,       // Report Count (6)
     0x75, 0x08,       // Report Size (8)
@@ -119,13 +121,6 @@ static void input_ccc_changed(const struct bt_gatt_attr *attr, uint16_t value)
 	simulate_input = (value == BT_GATT_CCC_NOTIFY) ? 1 : 0;
 }
 
-static ssize_t read_input_report(struct bt_conn *conn,
-				 const struct bt_gatt_attr *attr, void *buf,
-				 uint16_t len, uint16_t offset)
-{
-	return bt_gatt_attr_read(conn, attr, buf, len, offset, NULL, 0);
-}
-
 static ssize_t write_ctrl_point(struct bt_conn *conn,
 				const struct bt_gatt_attr *attr,
 				const void *buf, uint16_t len, uint16_t offset,
@@ -156,7 +151,7 @@ BT_GATT_SERVICE_DEFINE(hid_keyboard_service,
 	BT_GATT_CHARACTERISTIC(BT_UUID_HIDS_REPORT,
 		BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY,
 		BT_GATT_PERM_READ_AUTHEN,
-		read_input_report, NULL, NULL),
+		NULL, NULL, NULL),
 	BT_GATT_CCC(input_ccc_changed,
 		BT_GATT_PERM_READ_AUTHEN | BT_GATT_PERM_WRITE_AUTHEN),
 	BT_GATT_DESCRIPTOR(BT_UUID_HIDS_REPORT_REF, 
@@ -170,19 +165,23 @@ BT_GATT_SERVICE_DEFINE(hid_keyboard_service,
 
 void notify_keycodes(bt_conn *conn, std::vector<uint8_t> keycodes, std::vector<uint8_t> modifiers) {
     uint8_t modifiers_bitmask = convert_modifiers_to_bitmask(modifiers);
-
+    
     for(size_t i = 0; i < keycodes.size(); i += 6) {
-        std::vector<uint8_t> data {modifiers_bitmask, 0x00, 0x00};
+        std::array<uint8_t, 8> data {modifiers_bitmask, 0x00};
 
         auto last = std::min(keycodes.size(), i + 6);
-        data.insert(data.end(), keycodes.begin() + i, keycodes.begin() + last);
+        std::copy(keycodes.begin() + i, keycodes.begin() + last, data.begin() + 2);
 
-        bt_gatt_notify(conn, &hid_keyboard_service.attrs[4], &data[0], data.size());
+        int err = bt_gatt_notify(conn, &hid_keyboard_service.attrs[6], &data[0], 8);
+        if(err) {
+            printk("notify failed!");
+        }
     }
 }
 
 void notify_keyrelease(bt_conn *conn) {
-    notify_keycodes(conn, std::vector<uint8_t>(), std::vector<uint8_t>());
+    uint8_t keyrelease_data[8] = {0x00};
+    bt_gatt_notify(conn, &hid_keyboard_service.attrs[6], &keyrelease_data, 8);
 }
 
 uint8_t convert_modifiers_to_bitmask(std::vector<uint8_t> modifiers) {
