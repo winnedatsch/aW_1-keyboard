@@ -2,20 +2,23 @@
 #include <device.h>
 #include <devicetree.h>
 #include <drivers/gpio.h>
+#include <drivers/adc.h>
 #include <sys/printk.h>
 #include <array>
 #include <string>
 #include <vector>
 #include <settings/settings.h>
+#include <battery.h>
+#include <memory>
 
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/hci.h>
 #include <bluetooth/conn.h>
 #include <bluetooth/uuid.h>
 #include <bluetooth/gatt.h>
+#include <bluetooth/services/bas.h>
 #include <usb_hid_keys.h>
 #include "hid.h"
-
 
 namespace {
 	const int passkey = 1234;
@@ -36,8 +39,11 @@ namespace {
 		.interval_min = BT_GAP_ADV_FAST_INT_MIN_2,
 		.interval_max = BT_GAP_ADV_FAST_INT_MAX_2
 	};
-	bool key_pressed_previously = false;
+	uint16_t msSinceLastBatteryReport = 0; 
+    const uint16_t batteryReportingIntervalMs = 30000;
 
+	std::shared_ptr<Battery> battery = nullptr;
+	bool key_pressed_previously = false;
 	bt_conn *bt_connection = nullptr;
 }
 
@@ -110,13 +116,23 @@ void pairing_confirm(bt_conn *conn) {
 		printk("Pairing confirmation failed");
 	}
 }
+
 static struct bt_conn_auth_cb auth_callbacks = {
+	.passkey_display = NULL,
+	.passkey_entry = NULL,
+	.passkey_confirm = NULL,
 	.pairing_confirm = pairing_confirm
 };
 
 void main(void)
 {
-	struct device *gpio0 = device_get_binding("GPIO_0");
+	device *gpio0 = device_get_binding("GPIO_0");
+	device *adc0 = device_get_binding("ADC_0");
+
+	k_sleep(3000);
+
+	battery = std::make_shared<Battery>(3000, 4200, adc0, 7);
+	battery->begin(3600, 1.377, &sigmoidal);
 
 	for(auto pin : row_pins) {
 		gpio_pin_configure(gpio0, pin, GPIO_PULL_UP | GPIO_INPUT);
@@ -133,6 +149,7 @@ void main(void)
 	}
 
 	while(1) {
+
 		if(bt_connection) {
 			std::vector<uint8_t> pressed_keys;
 
@@ -157,8 +174,15 @@ void main(void)
 				key_pressed_previously = false;
 			}
 		}
-		
+
+		if(msSinceLastBatteryReport > batteryReportingIntervalMs) {
+			uint8_t battery_level_stepped_5 = static_cast<uint8_t>(round(battery->level() / 5.0) * 5.0);
+			printk("Battery level (rounded): %d%%\n", battery_level_stepped_5);
+			bt_gatt_bas_set_battery_level(battery_level_stepped_5);
+			msSinceLastBatteryReport = 0;
+		}
 		
 		k_sleep(polling_delay_ms);
+		msSinceLastBatteryReport += polling_delay_ms;
 	}
 }
