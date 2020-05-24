@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name keyboard_parts)(type Legacy)(uri ${KIPRJMOD}/symbols/keyboard_parts.lib)(options "")(descr ""))
+  (lib (name SnapEDA-Library)(type Legacy)(uri ${KIPRJMOD}/symbols/SnapEDA-Library.lib)(options "")(descr ""))
+)
