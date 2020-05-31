@@ -1,5 +1,5 @@
 
-(module SOIC127P1030X265-20N (layer F.Cu) (tedit 5ECA479A)
+(module SOIC127P1030X265-20N (layer F.Cu) (tedit 5ED3FF15)
   (descr "")
   (fp_text reference REF** (at -2.475 -7.212 0) (layer F.SilkS)
     (effects (font (size 1.0 1.0) (thickness 0.015)))

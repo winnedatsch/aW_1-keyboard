@@ -1,5 +1,5 @@
 
-(module SODFL3718X108N (layer F.Cu) (tedit 5ECA479A)
+(module SODFL3718X108N (layer F.Cu) (tedit 5ED3FF15)
   (descr "")
   (fp_text reference REF** (at -0.0517375 -1.6031885 0) (layer F.SilkS)
     (effects (font (size 0.570107874016 0.570107874016) (thickness 0.015)))

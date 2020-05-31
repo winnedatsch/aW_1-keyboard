@@ -1,5 +1,5 @@
 
-(module SOT23 (layer F.Cu) (tedit 5ECA479A)
+(module SOT23 (layer F.Cu) (tedit 5ED3FF15)
   (descr "<B>DIODE</B>")
   (fp_text reference REF** (at 1.27446 -2.54892 0) (layer F.SilkS)
     (effects (font (size 1.00351181102 1.00351181102) (thickness 0.015)))

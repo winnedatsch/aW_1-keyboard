@@ -1,5 +1,5 @@
 
-(module SOT95P285X140-5N (layer F.Cu) (tedit 5ECA479A)
+(module SOT95P285X140-5N (layer F.Cu) (tedit 5ED3FF15)
   (descr "")
   (fp_text reference REF** (at 0.66442 -2.53029 0) (layer F.SilkS)
     (effects (font (size 0.80262992126 0.80262992126) (thickness 0.015)))

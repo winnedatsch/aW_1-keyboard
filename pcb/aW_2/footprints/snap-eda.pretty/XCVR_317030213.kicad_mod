@@ -1,5 +1,5 @@
 
-(module XCVR_317030213 (layer F.Cu) (tedit 5ECA479A)
+(module XCVR_317030213 (layer F.Cu) (tedit 5ED3FF15)
   (descr "")
   (fp_text reference REF** (at -2.395 -8.989 0) (layer F.SilkS)
     (effects (font (size 1.0 1.0) (thickness 0.015)))

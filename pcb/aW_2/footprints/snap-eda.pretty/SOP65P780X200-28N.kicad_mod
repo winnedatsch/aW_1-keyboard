@@ -1,5 +1,5 @@
 
-(module SOP65P780X200-28N (layer F.Cu) (tedit 5ECA479A)
+(module SOP65P780X200-28N (layer F.Cu) (tedit 5ED3FF15)
   (descr "")
   (fp_text reference REF** (at -0.83083 -6.64375 0) (layer F.SilkS)
     (effects (font (size 1.0 1.0) (thickness 0.015)))
