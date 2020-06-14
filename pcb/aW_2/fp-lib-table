@@ -1,4 +1,5 @@
 (fp_lib_table
   (lib (name keebs)(type KiCad)(uri ${KIPRJMOD}/footprints/keebs.pretty)(options "")(descr ""))
   (lib (name snap-eda)(type KiCad)(uri ${KIPRJMOD}/footprints/snap-eda.pretty)(options "")(descr ""))
+  (lib (name keyswitches)(type KiCad)(uri ${KIPRJMOD}/footprints/keyswitches.pretty)(options "")(descr ""))
 )
