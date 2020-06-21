@@ -1802,17 +1802,6 @@ Wire Wire Line
 	2050 8150 2150 8150
 Wire Wire Line
 	1800 8050 1900 8050
-$Comp
-L Connector:Conn_ARM_JTAG_SWD_10 J4
-U 1 1 5F0E3D13
-P 1500 5700
-F 0 "J4" H 1057 5746 50  0000 R CNN
-F 1 "Conn_ARM_JTAG_SWD_10" V 900 6150 50  0000 R CNN
-F 2 "Connector_PinHeader_1.27mm:PinHeader_2x05_P1.27mm_Horizontal" H 1500 5700 50  0001 C CNN
-F 3 "http://infocenter.arm.com/help/topic/com.arm.doc.ddi0314h/DDI0314H_coresight_components_trm.pdf" V 1150 4450 50  0001 C CNN
-	1    1500 5700
-	1    0    0    -1  
-$EndComp
 Text Label 2100 5400 0    50   ~ 0
 reset
 Text Label 2100 5600 0    50   ~ 0
@@ -2099,28 +2088,6 @@ Wire Wire Line
 Wire Wire Line
 	15500 1800 15600 1800
 $Comp
-L power:+3.3V #PWR06
-U 1 1 5F8347A7
-P 15800 900
-F 0 "#PWR06" H 15800 750 50  0001 C CNN
-F 1 "+3.3V" H 15815 1073 50  0000 C CNN
-F 2 "" H 15800 900 50  0001 C CNN
-F 3 "" H 15800 900 50  0001 C CNN
-	1    15800 900 
-	1    0    0    -1  
-$EndComp
-$Comp
-L power:+3.3V #PWR05
-U 1 1 5F835952
-P 12950 900
-F 0 "#PWR05" H 12950 750 50  0001 C CNN
-F 1 "+3.3V" H 12965 1073 50  0000 C CNN
-F 2 "" H 12950 900 50  0001 C CNN
-F 3 "" H 12950 900 50  0001 C CNN
-	1    12950 900 
-	1    0    0    -1  
-$EndComp
-$Comp
 L power:GND #PWR011
 U 1 1 5F836A94
 P 12950 1800
@@ -2140,17 +2107,6 @@ F 1 "GND" H 15605 2727 50  0000 C CNN
 F 2 "" H 15600 2900 50  0001 C CNN
 F 3 "" H 15600 2900 50  0001 C CNN
 	1    15600 2900
-	1    0    0    -1  
-$EndComp
-$Comp
-L power:+3.3V #PWR01
-U 1 1 5F83F6AA
-P 13550 850
-F 0 "#PWR01" H 13550 700 50  0001 C CNN
-F 1 "+3.3V" H 13565 1023 50  0000 C CNN
-F 2 "" H 13550 850 50  0001 C CNN
-F 3 "" H 13550 850 50  0001 C CNN
-	1    13550 850 
 	1    0    0    -1  
 $EndComp
 Text Label 14000 1800 2    50   ~ 0
@@ -2913,7 +2869,6 @@ NoConn ~ 4050 6000
 NoConn ~ 4050 6100
 NoConn ~ 4050 6200
 NoConn ~ 4050 6300
-NoConn ~ 2000 5900
 NoConn ~ 4750 1500
 NoConn ~ 4750 1800
 NoConn ~ 6150 1500
@@ -2959,4 +2914,49 @@ row4
 Wire Wire Line
 	2050 9550 2150 9550
 NoConn ~ 4550 8950
+$Comp
+L Connector:Conn_ARM_JTAG_SWD_10 J4
+U 1 1 5F0E3D13
+P 1500 5700
+F 0 "J4" H 1057 5746 50  0000 R CNN
+F 1 "Conn_ARM_JTAG_SWD_10" V 900 6150 50  0000 R CNN
+F 2 "Connector_PinHeader_1.27mm:PinHeader_2x05_P1.27mm_Horizontal" H 1500 5700 50  0001 C CNN
+F 3 "http://infocenter.arm.com/help/topic/com.arm.doc.ddi0314h/DDI0314H_coresight_components_trm.pdf" V 1150 4450 50  0001 C CNN
+	1    1500 5700
+	1    0    0    -1  
+$EndComp
+NoConn ~ 2000 5900
+$Comp
+L power:VDC #PWR?
+U 1 1 5EFAF23C
+P 12950 900
+F 0 "#PWR?" H 12950 800 50  0001 C CNN
+F 1 "VDC" H 12965 1073 50  0000 C CNN
+F 2 "" H 12950 900 50  0001 C CNN
+F 3 "" H 12950 900 50  0001 C CNN
+	1    12950 900 
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:VDC #PWR?
+U 1 1 5EFB03DB
+P 13550 850
+F 0 "#PWR?" H 13550 750 50  0001 C CNN
+F 1 "VDC" H 13565 1023 50  0000 C CNN
+F 2 "" H 13550 850 50  0001 C CNN
+F 3 "" H 13550 850 50  0001 C CNN
+	1    13550 850 
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:VDC #PWR?
+U 1 1 5EFB1743
+P 15800 900
+F 0 "#PWR?" H 15800 800 50  0001 C CNN
+F 1 "VDC" H 15815 1073 50  0000 C CNN
+F 2 "" H 15800 900 50  0001 C CNN
+F 3 "" H 15800 900 50  0001 C CNN
+	1    15800 900 
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
