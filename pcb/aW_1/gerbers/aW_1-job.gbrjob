@@ -7,14 +7,14 @@
       "Application": "Pcbnew",
       "Version":     "(5.1.6)-1"
     },
-    "CreationDate":  "2020-06-26T14:35:25+02:00"
+    "CreationDate":  "2020-06-26T14:53:12+02:00"
   },
   "GeneralSpecs":
   {
     "ProjectId":
     {
-      "Name": "aW_2",
-      "GUID": "61575f32-2e6b-4696-9361-645f70636258",
+      "Name": "aW_1",
+      "GUID": "61575f31-2e6b-4696-9361-645f70636258",
       "Revision": "v1.0"
     },
     "Size":
@@ -40,37 +40,37 @@
   "FilesAttributes":
   [
     {
-      "Path":  "aW_2-F_Cu.gbr",
+      "Path":  "aW_1-F_Cu.gbr",
       "FileFunction":  "Copper,L1,Top",
       "FilePolarity":  "Positive"
     },
     {
-      "Path":  "aW_2-B_Cu.gbr",
+      "Path":  "aW_1-B_Cu.gbr",
       "FileFunction":  "Copper,L2,Bot",
       "FilePolarity":  "Positive"
     },
     {
-      "Path":  "aW_2-F_SilkS.gbr",
+      "Path":  "aW_1-F_SilkS.gbr",
       "FileFunction":  "Legend,Top",
       "FilePolarity":  "Positive"
     },
     {
-      "Path":  "aW_2-B_SilkS.gbr",
+      "Path":  "aW_1-B_SilkS.gbr",
       "FileFunction":  "Legend,Bot",
       "FilePolarity":  "Positive"
     },
     {
-      "Path":  "aW_2-F_Mask.gbr",
+      "Path":  "aW_1-F_Mask.gbr",
       "FileFunction":  "SolderMask,Top",
       "FilePolarity":  "Negative"
     },
     {
-      "Path":  "aW_2-B_Mask.gbr",
+      "Path":  "aW_1-B_Mask.gbr",
       "FileFunction":  "SolderMask,Bot",
       "FilePolarity":  "Negative"
     },
     {
-      "Path":  "aW_2-Edge_Cuts.gbr",
+      "Path":  "aW_1-Edge_Cuts.gbr",
       "FileFunction":  "Profile",
       "FilePolarity":  "Positive"
     }
