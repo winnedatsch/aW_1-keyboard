@@ -1785,10 +1785,6 @@ Wire Wire Line
 Wire Wire Line
 	2150 8650 2050 8650
 Wire Wire Line
-	2050 8650 2050 8800
-Wire Wire Line
-	2050 8800 1600 8800
-Wire Wire Line
 	1600 8800 1600 8750
 Connection ~ 1600 8800
 Wire Wire Line
@@ -2459,7 +2455,7 @@ Wire Wire Line
 	6600 8500 6700 8500
 Wire Wire Line
 	6700 8500 6700 8550
-Text Label 2050 8950 2    50   ~ 0
+Text Label 2050 8850 2    50   ~ 0
 btn2
 Wire Wire Line
 	2050 8950 2150 8950
@@ -2885,7 +2881,6 @@ NoConn ~ 4550 9250
 NoConn ~ 4550 9350
 NoConn ~ 2150 9450
 NoConn ~ 2150 8750
-NoConn ~ 2150 8850
 Wire Wire Line
 	9450 5700 9400 5700
 Wire Wire Line
@@ -3005,4 +3000,73 @@ NoConn ~ 3000 1050
 Wire Wire Line
 	3600 1550 3600 1950
 Connection ~ 3600 1950
+$Comp
+L power:+BATT #PWR0104
+U 1 1 5F0170FA
+P 7600 8750
+F 0 "#PWR0104" H 7600 8600 50  0001 C CNN
+F 1 "+BATT" H 7615 8923 50  0000 C CNN
+F 2 "" H 7600 8750 50  0001 C CNN
+F 3 "" H 7600 8750 50  0001 C CNN
+	1    7600 8750
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R_Small R16
+U 1 1 5F018400
+P 7600 8950
+F 0 "R16" H 7659 8996 50  0000 L CNN
+F 1 "806K" H 7659 8905 50  0000 L CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" H 7600 8950 50  0001 C CNN
+F 3 "~" H 7600 8950 50  0001 C CNN
+	1    7600 8950
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R_Small R17
+U 1 1 5F018BB8
+P 7600 9350
+F 0 "R17" H 7659 9396 50  0000 L CNN
+F 1 "2M" H 7659 9305 50  0000 L CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" H 7600 9350 50  0001 C CNN
+F 3 "~" H 7600 9350 50  0001 C CNN
+	1    7600 9350
+	1    0    0    -1  
+$EndComp
+Text Label 2050 8950 2    50   ~ 0
+bsense
+Wire Wire Line
+	2050 8850 2150 8850
+Wire Wire Line
+	2050 8750 1850 8750
+Wire Wire Line
+	1850 8750 1850 8800
+Wire Wire Line
+	2050 8650 2050 8750
+Wire Wire Line
+	1600 8800 1850 8800
+Text Label 7450 9150 2    50   ~ 0
+bsense
+$Comp
+L power:GND #PWR0105
+U 1 1 5F2C0026
+P 7600 9550
+F 0 "#PWR0105" H 7600 9300 50  0001 C CNN
+F 1 "GND" H 7605 9377 50  0000 C CNN
+F 2 "" H 7600 9550 50  0001 C CNN
+F 3 "" H 7600 9550 50  0001 C CNN
+	1    7600 9550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7600 8750 7600 8850
+Wire Wire Line
+	7600 9050 7600 9150
+Wire Wire Line
+	7600 9450 7600 9550
+Wire Wire Line
+	7600 9150 7450 9150
+Connection ~ 7600 9150
+Wire Wire Line
+	7600 9150 7600 9250
 $EndSCHEMATC
