@@ -122,12 +122,12 @@ $EndComp
 $Comp
 L power:+BATT #PWR03
 U 1 1 5ECBF437
-P 1500 1300
-F 0 "#PWR03" H 1500 1150 50  0001 C CNN
-F 1 "+BATT" H 1515 1473 50  0000 C CNN
-F 2 "" H 1500 1300 50  0001 C CNN
-F 3 "" H 1500 1300 50  0001 C CNN
-	1    1500 1300
+P 1150 1300
+F 0 "#PWR03" H 1150 1150 50  0001 C CNN
+F 1 "+BATT" H 1165 1473 50  0000 C CNN
+F 2 "" H 1150 1300 50  0001 C CNN
+F 3 "" H 1150 1300 50  0001 C CNN
+	1    1150 1300
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -2524,31 +2524,11 @@ Wire Wire Line
 	1900 10350 2000 10350
 Wire Wire Line
 	1350 1950 1500 1950
-$Comp
-L Device:Q_PMOS_SDG Q1
-U 1 1 5EDC238F
-P 1400 1550
-F 0 "Q1" H 1605 1504 50  0000 L CNN
-F 1 "Q_PMOS_SDG" H 1605 1595 50  0000 L CNN
-F 2 "snap-eda:SOT23" H 1600 1650 50  0001 C CNN
-F 3 "~" H 1400 1550 50  0001 C CNN
-	1    1400 1550
-	1    0    0    1   
-$EndComp
-Wire Wire Line
-	850  1300 850  1550
-Wire Wire Line
-	850  1550 1200 1550
-Connection ~ 850  1550
-Wire Wire Line
-	850  1550 850  1950
 Wire Wire Line
 	1500 1750 1500 1950
 Connection ~ 1500 1950
 Wire Wire Line
 	1500 1950 1650 1950
-Wire Wire Line
-	1500 1350 1500 1300
 $Comp
 L Device:C_Small C7
 U 1 1 5EEAAFA4
@@ -2969,30 +2949,8 @@ F 10 "" H 4200 1250 50  0001 L BNN "Field10"
 	1    4200 1250
 	-1   0    0    1   
 $EndComp
-Connection ~ 3600 1550
 Wire Wire Line
 	4200 1150 4300 1150
-Wire Wire Line
-	4300 1150 4300 850 
-Wire Wire Line
-	3000 1150 2900 1150
-Wire Wire Line
-	2900 1150 2900 850 
-Wire Wire Line
-	2900 850  4300 850 
-Connection ~ 4300 850 
-Wire Wire Line
-	4300 850  4300 800 
-Wire Wire Line
-	3000 1250 2900 1250
-Wire Wire Line
-	2900 1250 2900 1550
-Wire Wire Line
-	2900 1550 3600 1550
-Wire Wire Line
-	4300 1550 4300 1250
-Wire Wire Line
-	4300 1250 4200 1250
 Wire Wire Line
 	3600 1550 4300 1550
 NoConn ~ 4200 1050
@@ -3069,4 +3027,38 @@ Wire Wire Line
 Connection ~ 7600 9150
 Wire Wire Line
 	7600 9150 7600 9250
+$Comp
+L SnapEDA-Library:DMP2035U-7 U6
+U 1 1 5F03DD47
+P 1550 1250
+F 0 "U6" H 1750 1100 50  0000 R CNN
+F 1 "DMP2035U-7" H 2000 1200 50  0000 R CNN
+F 2 "snap-eda:SOT23" H 1550 1250 50  0001 L BNN
+F 3 "" H 1550 1250 50  0001 C CNN
+	1    1550 1250
+	1    0    0    1   
+$EndComp
+Wire Wire Line
+	850  1300 850  1550
+Wire Wire Line
+	1150 1300 1150 1350
+Wire Wire Line
+	1150 1350 1350 1350
+Wire Wire Line
+	850  1550 1350 1550
+Connection ~ 850  1550
+Wire Wire Line
+	850  1550 850  1950
+Wire Wire Line
+	2050 1450 2050 1750
+Wire Wire Line
+	2050 1750 1500 1750
+Wire Wire Line
+	4300 1250 4200 1250
+Wire Wire Line
+	4300 1550 4300 1250
+Wire Wire Line
+	4300 800  4300 1150
+NoConn ~ 3000 1150
+NoConn ~ 3000 1250
 $EndSCHEMATC
