@@ -22,7 +22,7 @@
 #include <sys/util.h>
 #include <string>
 
-BatteryReader::BatteryReader(device *adc_device, uint16_t ref_voltage,  uint16_t min_voltage, uint16_t max_voltage, uint8_t sense_pin, float divider_ratio, const map_fn &map_function) : 
+BatteryReader::BatteryReader(device *adc_device, uint16_t ref_voltage,  uint16_t min_voltage, uint16_t max_voltage, uint8_t sense_pin, float divider_ratio, const map_fn map_function) : 
 	adc_device{adc_device}, 
 	ref_voltage{ref_voltage},
 	min_voltage{min_voltage}, 
@@ -56,7 +56,7 @@ uint8_t BatteryReader::level(uint16_t voltage) {
 	} else if (voltage >= max_voltage) {
 		return 100;
 	} else {
-		return (map_function)(voltage, min_voltage, max_voltage);
+		return map_function(voltage, min_voltage, max_voltage);
 	}
 }
 

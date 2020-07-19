@@ -1,5 +1,5 @@
 #include <bluetooth/conn.h>
-
+#include <functional>
 
 void ble_init(std::function<void()> callback = nullptr);
 

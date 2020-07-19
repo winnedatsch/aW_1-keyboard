@@ -166,16 +166,14 @@ BT_GATT_SERVICE_DEFINE(hid_keyboard_service,
 void notify_keycodes(bt_conn *conn, std::vector<uint8_t> keycodes, std::vector<uint8_t> modifiers) {
     uint8_t modifiers_bitmask = convert_modifiers_to_bitmask(modifiers);
     
-    for(size_t i = 0; i < keycodes.size(); i += 6) {
-        std::array<uint8_t, 8> data {modifiers_bitmask, 0x00};
+    std::array<uint8_t, 8> data {modifiers_bitmask, 0x00};
 
-        auto last = std::min(keycodes.size(), i + 6);
-        std::copy(keycodes.begin() + i, keycodes.begin() + last, data.begin() + 2);
+    auto last = std::min(keycodes.size(), 5u);
+    std::copy(keycodes.begin(), keycodes.begin() + last, data.begin() + 2);
 
-        int err = bt_gatt_notify(conn, &hid_keyboard_service.attrs[6], &data[0], 8);
-        if(err) {
-            printk("notify failed!");
-        }
+    int err = bt_gatt_notify(conn, &hid_keyboard_service.attrs[6], &data[0], 8);
+    if(err) {
+        printk("notify failed!");
     }
 }
 

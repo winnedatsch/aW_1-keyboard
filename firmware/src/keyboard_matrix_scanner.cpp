@@ -3,7 +3,7 @@
 #include <drivers/i2c.h>
 
 KeyboardMatrixScanner::KeyboardMatrixScanner(device *gpio, device *i2c, uint8_t left_i2c_id,  keyboard_pins pins): 
-gpio{gpio}, i2c{i2c}, pins{pins}, left_i2c_id{left_i2c_id} {
+gpio{gpio}, i2c{i2c}, left_i2c_id{left_i2c_id}, pins{pins} {
     for(auto pin : pins.rows_right) {
 		gpio_pin_configure(gpio, pin, GPIO_PULL_UP | GPIO_INPUT);
 	}
@@ -30,7 +30,7 @@ std::vector<std::pair<uint8_t, uint8_t>> KeyboardMatrixScanner::scan_right() {
 		for(uint8_t row = 0; row < pins.rows_right.size(); row++) {
 
 			if(gpio_pin_get(gpio, pins.rows_right[row]) == 0) {
-				pressed_keys.push_back(std::make_pair(row, column));
+				pressed_keys.push_back(std::make_pair(row, column + pins.columns_left.size()));
 			}
 		}
 
@@ -60,7 +60,7 @@ std::vector<std::pair<uint8_t, uint8_t>> KeyboardMatrixScanner::scan_left() {
 			uint8_t row_pin = pins.rows_left[row];
 
 			if(((value & (1 << row_pin)) >> row_pin) == 0) {
-				pressed_keys.push_back(std::make_pair(row, column + pins.columns_right.size()));
+				pressed_keys.push_back(std::make_pair(row, column));
 			}
 		}
 

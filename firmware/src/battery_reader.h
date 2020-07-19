@@ -14,7 +14,7 @@ class BatteryReader {
 		uint16_t min_voltage;
 		uint16_t max_voltage;
 		float divider_ratio;
-		const map_fn &map_function;
+		const map_fn map_function;
 		adc_channel_cfg channel_config;
 		int16_t sample_buffer;
 		
@@ -31,7 +31,7 @@ class BatteryReader {
 		 * @param divider_ratio is the multiplier used to obtain the real battery voltage
 		 * @param map_fn is the function that will map the voltage reading to a battery percentage
 		 */
-		BatteryReader(device *adc_device, uint16_t ref_voltage,  uint16_t min_voltage, uint16_t max_voltage, uint8_t sense_pin, float divider_ratio, const map_fn &map_function);
+		BatteryReader(device *adc_device, uint16_t ref_voltage,  uint16_t min_voltage, uint16_t max_voltage, uint8_t sense_pin, float divider_ratio, const map_fn map_function);
 
 		/**
 		 * Returns the current battery level as a number between 0 and 100, with 0 indicating an empty battery and 100 a
