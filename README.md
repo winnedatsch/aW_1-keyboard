@@ -3,8 +3,8 @@
 This repository contais the firmware and pcb for the aW_1 split (semi-)wireless keyboard.
 The aW_1 layout is a modification of the ErgoDox layout with straightened rows and removed thumb clusters. It is therefore fully compatible with ErgoDox keysets. 
 
-**The PCB is finished, though not yet ordered and validated**  
-**The firmware is not yet ready (validated on a prototype with fewer keys, but lacking support for deep sleep, keymap configuration, and multiple device pairing)**
+**The PCB deesign is finished, has been delivered and validated (bugs and enhancements have been created as GitHub issues)**  
+**The firmware has been validated with the delivered PCB, but still lacks some features (please refer to the GitHub issues)**
 
 ![PCB Preview](pcb/aW_1/pcb_preview.png)
 
