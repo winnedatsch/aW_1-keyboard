@@ -4,4 +4,7 @@ if BOARD_AW_1
 config BOARD
 	default "aW_1"
 
+config BT_CTLR
+	default BT
+
 endif # BOARD_AW_1

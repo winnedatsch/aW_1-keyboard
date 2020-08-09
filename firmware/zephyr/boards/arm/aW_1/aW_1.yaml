@@ -1,5 +1,5 @@
 identifier: aW_1
-name: nRF52 Adafruit Feather
+name: aW_1
 type: mcu
 arch: arm
 toolchain:

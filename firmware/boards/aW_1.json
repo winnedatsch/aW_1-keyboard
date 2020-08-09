@@ -23,8 +23,7 @@
       "maximum_size": 524288,
       "protocol": "jlink",
       "protocols": [
-        "jlink",
-        "nrfjprog"
+        "jlink"
       ]
     },
     "url": "",
