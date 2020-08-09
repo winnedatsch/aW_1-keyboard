@@ -22,6 +22,8 @@ const dynamic_matrix<uint8_t> keycode_matrix {{
     {KEY_LEFTCTRL, KEY_LEFTALT, KEY_LEFTMETA, KEY_HOME, KEY_END, KEY_SPACE, KEY_NONE, KEY_NONE, KEY_SPACE, KEY_DELETE, KEY_RIGHTALT, KEY_LEFT, KEY_DOWN, KEY_RIGHT}
 }};
 
+const uint8_t battery_reading_pin_analogue = 2;
+
 // DEVELOPMENT BOARD
 // const keyboard_pins pins {
 // 		{0, 1}, // rows_left
@@ -34,6 +36,8 @@ const dynamic_matrix<uint8_t> keycode_matrix {{
 //     {KEY_A, KEY_B, KEY_C, KEY_D},
 //     {KEY_LEFTSHIFT, KEY_E, KEY_F, KEY_G}
 // }};
+
+// const uint8_t battery_reading_pin_analogue = 7; 
 
 const uint16_t expander_i2c = 0x20;
 

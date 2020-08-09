@@ -38,7 +38,7 @@ void main(void)
 	device *adc0 = device_get_binding("ADC_0");
 	device *i2c0 = device_get_binding("I2C_0");
 
-	battery_reader = std::make_unique<BatteryReader>(adc0, 3600, 3000, 4200, 7, 1.377, sigmoidal);
+	battery_reader = std::make_unique<BatteryReader>(adc0, 3600, 3000, 4200, battery_reading_pin_analogue, 1.377, sigmoidal);
 	matrix_scanner = std::make_unique<KeyboardMatrixScanner>(gpio0, i2c0, expander_i2c, pins);
 	keycode_resolver = std::make_unique<KeycodeResolver>(keycode_matrix);
 

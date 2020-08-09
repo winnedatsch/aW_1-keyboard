@@ -30,7 +30,7 @@ std::vector<std::pair<uint8_t, uint8_t>> KeyboardMatrixScanner::scan_right() {
 		for(uint8_t row = 0; row < pins.rows_right.size(); row++) {
 
 			if(gpio_pin_get(gpio, pins.rows_right[row]) == 0) {
-				pressed_keys.push_back(std::make_pair(row, column + pins.columns_left.size()));
+				pressed_keys.push_back(std::make_pair(row, (pins.columns_right.size() - column - 1) + pins.columns_left.size()));
 			}
 		}
 
