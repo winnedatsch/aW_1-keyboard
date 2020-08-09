@@ -1,3 +1,7 @@
+#ifndef BATTERY_READER
+#define BATTERY_READER
+
+
 #include <zephyr.h>
 #include <device.h>
 #include <drivers/gpio.h>
@@ -89,3 +93,5 @@ static inline uint8_t asigmoidal(uint16_t voltage, uint16_t min_voltage, uint16_
 static inline uint8_t linear(uint16_t voltage, uint16_t min_voltage, uint16_t max_voltage) {
 	return (unsigned long)(voltage - min_voltage) * 100 / (max_voltage - min_voltage);
 }
+
+#endif

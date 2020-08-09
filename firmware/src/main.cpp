@@ -15,28 +15,15 @@
 #include "ble_connection_manager.h"
 #include "keyboard_matrix_scanner.h"
 #include "keycode_resolver.h"
+#include "board_mappings.h"
 
 namespace {
-	// keyboard configuration
-	const keyboard_pins pins {
-		{0, 1}, // rows_left
-		{7, 6}, // columns_left
-		{2, 3}, // rows_right
-		{16, 15} // columns_right
-	};
-	const dynamic_matrix<uint8_t> keycode_matrix {{
-		{KEY_A, KEY_B, KEY_C, KEY_D},
-		{KEY_LEFTSHIFT, KEY_E, KEY_F, KEY_G}
-	}};
-	
-	const uint16_t expander_i2c = 0x20;
 	const uint8_t polling_delay_ms = 2;
 	bool key_pressed_previously = false;
 
 	// battery reading configuration
 	uint16_t ms_since_last_battery_report = 0; 
     const uint16_t battery_reporting_interval_ms = 30000;
-
 
 	std::unique_ptr<BatteryReader> battery_reader = nullptr;
 	std::unique_ptr<KeyboardMatrixScanner> matrix_scanner = nullptr;

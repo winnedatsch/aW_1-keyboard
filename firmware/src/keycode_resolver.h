@@ -1,3 +1,6 @@
+#ifndef KEYCODE_RESOLVER
+#define KEYCODE_RESOLVER
+
 #include <vector>
 #include <zephyr.h>
 #include "usb_hid_keys.h"
@@ -16,3 +19,5 @@ class KeycodeResolver {
         KeycodeResolver(dynamic_matrix<uint8_t> keycode_matrix);
         keycodes resolve_keycodes(std::vector<std::pair<uint8_t, uint8_t>> pressed_keys);
 };
+
+#endif

@@ -15,8 +15,8 @@ gpio{gpio}, i2c{i2c}, left_i2c_id{left_i2c_id}, pins{pins} {
 
 std::vector<std::pair<uint8_t, uint8_t>> KeyboardMatrixScanner::scan_matrix() {
     std::vector<std::pair<uint8_t, uint8_t>> pressed_keys = scan_right();
-    std::vector<std::pair<uint8_t, uint8_t>> pressed_keys_left = scan_left();
-	pressed_keys.insert(std::end(pressed_keys), std::begin(pressed_keys_left), std::end(pressed_keys_left));
+    // std::vector<std::pair<uint8_t, uint8_t>> pressed_keys_left = scan_left();
+	// pressed_keys.insert(std::end(pressed_keys), std::begin(pressed_keys_left), std::end(pressed_keys_left));
 
     return pressed_keys;
 }

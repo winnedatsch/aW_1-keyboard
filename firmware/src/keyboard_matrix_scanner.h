@@ -1,3 +1,7 @@
+#ifndef KEYBOARD_MATRIX_SCANNER
+#define KEYBOARD_MATRIX_SCANNER
+
+
 #include <device.h>
 #include <vector>
 #include <utility>
@@ -25,3 +29,5 @@ public:
     KeyboardMatrixScanner(device *gpio, device *i2c, uint8_t left_i2c_id, keyboard_pins pins);
     std::vector<std::pair<uint8_t, uint8_t>> scan_matrix();
 };
+
+#endif
