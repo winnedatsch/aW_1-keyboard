@@ -284,4 +284,6 @@
 #define KEY_MEDIA_REFRESH 0xfa
 #define KEY_MEDIA_CALC 0xfb
 
+#define KEY_FN 0xff
+
 #endif // USB_HID_KEYS

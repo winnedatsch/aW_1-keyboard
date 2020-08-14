@@ -24,23 +24,19 @@ namespace {
 	// battery reading configuration
 	uint16_t ms_since_last_battery_report = 0; 
     const uint16_t battery_reporting_interval_ms = 30000;
-
-	std::unique_ptr<BatteryReader> battery_reader = nullptr;
-	std::unique_ptr<KeyboardMatrixScanner> matrix_scanner = nullptr;
-	std::unique_ptr<KeycodeResolver> keycode_resolver = nullptr;
 }
 
 
 
 void main(void)
 {
-	device *gpio0 = device_get_binding("GPIO_0");
-	device *adc0 = device_get_binding("ADC_0");
-	device *i2c0 = device_get_binding("I2C_0");
+	std::shared_ptr<device> gpio0 (device_get_binding("GPIO_0"));
+	std::shared_ptr<device> adc0 (device_get_binding("ADC_0"));
+	std::shared_ptr<device> i2c0 (device_get_binding("I2C_0"));
 
-	battery_reader = std::make_unique<BatteryReader>(adc0, 3600, 3000, 4200, battery_reading_pin_analogue, 1.377, sigmoidal);
-	matrix_scanner = std::make_unique<KeyboardMatrixScanner>(gpio0, i2c0, expander_i2c, pins);
-	keycode_resolver = std::make_unique<KeycodeResolver>(keycode_matrix);
+	auto battery_reader = std::make_unique<BatteryReader>(adc0, 3600, 3000, 4200, battery_reading_pin_analogue, 1.377, sigmoidal);
+	auto matrix_scanner = std::make_unique<KeyboardMatrixScanner>(gpio0, i2c0, expander_i2c, pins);
+	auto keycode_resolver = std::make_unique<KeycodeResolver>(keycode_matrix, fn_matrix);
 
 	ble_init([]() {
 		hid_init();

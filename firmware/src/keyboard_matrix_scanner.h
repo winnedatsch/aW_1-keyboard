@@ -5,6 +5,7 @@
 #include <device.h>
 #include <vector>
 #include <utility>
+#include <memory>
 
 
 typedef struct keyboard_pins {
@@ -17,8 +18,8 @@ typedef struct keyboard_pins {
 class KeyboardMatrixScanner
 {
 private:
-    device *gpio;
-    device *i2c;
+    std::shared_ptr<device> gpio;
+    std::shared_ptr<device> i2c;
     uint8_t left_i2c_id;
     keyboard_pins pins;
     
@@ -26,7 +27,7 @@ private:
     std::vector<std::pair<uint8_t, uint8_t>> scan_right();
 
 public:
-    KeyboardMatrixScanner(device *gpio, device *i2c, uint8_t left_i2c_id, keyboard_pins pins);
+    KeyboardMatrixScanner(std::shared_ptr<device> gpio, std::shared_ptr<device> i2c, uint8_t left_i2c_id, keyboard_pins pins);
     std::vector<std::pair<uint8_t, uint8_t>> scan_matrix();
 };
 

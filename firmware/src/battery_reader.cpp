@@ -17,12 +17,8 @@
  */
 
 #include "battery_reader.h"
-#include <zephyr.h>
-#include <drivers/adc.h>
-#include <sys/util.h>
-#include <string>
 
-BatteryReader::BatteryReader(device *adc_device, uint16_t ref_voltage,  uint16_t min_voltage, uint16_t max_voltage, uint8_t sense_pin, float divider_ratio, const map_fn map_function) : 
+BatteryReader::BatteryReader(std::shared_ptr<device> adc_device, uint16_t ref_voltage,  uint16_t min_voltage, uint16_t max_voltage, uint8_t sense_pin, float divider_ratio, const map_fn map_function) : 
 	adc_device{adc_device}, 
 	ref_voltage{ref_voltage},
 	min_voltage{min_voltage}, 
@@ -38,7 +34,7 @@ BatteryReader::BatteryReader(device *adc_device, uint16_t ref_voltage,  uint16_t
 		.input_positive = (uint8_t) (sense_pin + 1)
 	}
 {
-	int error = adc_channel_setup(this->adc_device, &(this->channel_config));
+	int error = adc_channel_setup(adc_device.get(), &channel_config);
 	if(error) {
 		printk("ADC setup failed\n");
 	} else {
@@ -71,7 +67,7 @@ uint16_t BatteryReader::voltage() {
 		.calibrate = 0						// don't calibrate
 	};
 
-	int error = adc_read(this->adc_device, &sequence);
+	int error = adc_read(adc_device.get(), &sequence);
 
 	if(error) {
 		printk("ADC sampling failed\n");
