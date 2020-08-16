@@ -22,6 +22,7 @@ private:
     std::shared_ptr<device> i2c;
     uint8_t left_i2c_id;
     keyboard_pins pins;
+    bool i2c_initialised = false;
     
     std::vector<std::pair<uint8_t, uint8_t>> scan_left();
     std::vector<std::pair<uint8_t, uint8_t>> scan_right();

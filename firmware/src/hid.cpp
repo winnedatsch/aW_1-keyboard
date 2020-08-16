@@ -33,7 +33,7 @@ struct hids_report {
 } __packed;
 
 static struct hids_info info = {
-	.version = 0x0000,
+	.version = 0x0101,
 	.code = 0x00,
 	.flags = HIDS_NORMALLY_CONNECTABLE,
 };
@@ -150,10 +150,10 @@ BT_GATT_SERVICE_DEFINE(hid_keyboard_service,
         read_report_map, NULL, NULL),
 	BT_GATT_CHARACTERISTIC(BT_UUID_HIDS_REPORT,
 		BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY,
-		BT_GATT_PERM_READ_AUTHEN,
+		BT_GATT_PERM_READ,
 		NULL, NULL, NULL),
 	BT_GATT_CCC(input_ccc_changed,
-		BT_GATT_PERM_READ_AUTHEN | BT_GATT_PERM_WRITE_AUTHEN),
+		BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
 	BT_GATT_DESCRIPTOR(BT_UUID_HIDS_REPORT_REF, 
         BT_GATT_PERM_READ,
 		read_report, NULL, &input),

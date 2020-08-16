@@ -6,9 +6,6 @@
 
 namespace {
     bt_conn *connection;
-    // BLE configuration
-    const int passkey = 1234;
-    const bt_le_conn_param *connection_paramters = BT_LE_CONN_PARAM(1, 1, 20, 400);
     const struct bt_data advertising_data[] = {
         BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
         BT_DATA_BYTES(BT_DATA_UUID16_ALL,
@@ -50,7 +47,6 @@ namespace {
 
     void connected(struct bt_conn *conn, u8_t err) {
         char addr[BT_ADDR_LE_STR_LEN];
-
         bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
         if (err) {
@@ -64,15 +60,10 @@ namespace {
         if (bt_conn_set_security(conn, BT_SECURITY_L2)) {
             printk("Failed to set security\n");
         }
-
-        if(bt_conn_le_param_update(conn, connection_paramters)) {
-            printk("Failed to update connection paramters\n");
-        }
     }
 
     void disconnected(struct bt_conn *conn, u8_t reason) {
         char addr[BT_ADDR_LE_STR_LEN];
-
         bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
         printk("Disconnected from %s (reason 0x%02x)\n", addr, reason);
@@ -81,22 +72,36 @@ namespace {
         connection = nullptr;
     }
 
-    void pairing_confirm(bt_conn *conn) {
-        printk("Asking for pairing confirmation\n");
-        if(bt_conn_auth_pairing_confirm(conn)) {
-            printk("Pairing confirmation failed\n");
+    void security_changed(struct bt_conn *conn, bt_security_t level, enum bt_security_err err) {
+        char addr[BT_ADDR_LE_STR_LEN];
+        bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+        if(err) {
+             printk("An error occurred during security level change for %s to level %d (error 0x%02x)\n", addr, level, err);
+        } else {
+            printk("Security level for %s changed: level %d\n", addr, level);
         }
+    }
+
+    void le_param_updated(struct bt_conn *conn, u16_t interval, u16_t latency, u16_t timeout) {
+        char addr[BT_ADDR_LE_STR_LEN];
+        bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+        printk("Connection parameters for %s changed: interval %d, latency %d, timeout %d\n", addr, interval, latency, timeout);
     }
 
     struct bt_conn_cb conn_callbacks {
         .connected = connected,
         .disconnected = disconnected,
+        .le_param_updated = le_param_updated,
+        .security_changed = security_changed
     };
+
     struct bt_conn_auth_cb auth_callbacks {
         .passkey_display = NULL,
         .passkey_entry = NULL,
         .passkey_confirm = NULL,
-        .pairing_confirm = pairing_confirm
+        .pairing_confirm = NULL
     };
 }
 
@@ -110,8 +115,7 @@ void ble_init(std::function<void()> callback) {
 
     if(!bt_enable(ble_ready)) {
 		bt_conn_cb_register(&conn_callbacks);
-		bt_conn_auth_cb_register(&auth_callbacks);
-		bt_passkey_set(passkey);
+        bt_conn_auth_cb_register(&auth_callbacks);
 	} else {
         printk("Bluetooth initialisation failed\n");
     }

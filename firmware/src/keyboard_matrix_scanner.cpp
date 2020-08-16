@@ -11,6 +11,8 @@ gpio{gpio}, i2c{i2c}, left_i2c_id{left_i2c_id}, pins{pins} {
 	for(auto pin : pins.columns_right) {
 		gpio_pin_configure(gpio.get(), pin, GPIO_DISCONNECTED);
 	}
+
+	i2c_configure(i2c.get(), I2C_SPEED_SET(I2C_SPEED_FAST));
 }
 
 std::vector<std::pair<uint8_t, uint8_t>> KeyboardMatrixScanner::scan_matrix() {
@@ -44,15 +46,18 @@ std::vector<std::pair<uint8_t, uint8_t>> KeyboardMatrixScanner::scan_left() {
 	std::vector<std::pair<uint8_t, uint8_t>> pressed_keys;
 
 	auto err = i2c_reg_write_byte(i2c.get(), left_i2c_id, 0x01, 0xFF); // set port B (rows) to inputs
-	if(err == 0) {
-		i2c_reg_write_byte(i2c.get(), left_i2c_id, 0x0D, 0xFF); // enable port B pull-ups
-		i2c_reg_write_byte(i2c.get(), left_i2c_id, 0x00, 0xFF); // set port A (columns) to inputs
-		i2c_reg_write_byte(i2c.get(), left_i2c_id, 0x0C, 0x00); // disable port A pull-ups
+	if(err == 0) { // left half is connected
+		if(!i2c_initialised) {
+			i2c_reg_write_byte(i2c.get(), left_i2c_id, 0x0D, 0xFF); // enable port B pull-ups
+			i2c_reg_write_byte(i2c.get(), left_i2c_id, 0x00, 0xFF); // set port A (columns) to inputs
+			i2c_reg_write_byte(i2c.get(), left_i2c_id, 0x0C, 0x00); // disable port A pull-ups
+			i2c_reg_write_byte(i2c.get(), left_i2c_id, 0x12, 0x00); // set output latches of port A
+			i2c_initialised = true;
+		}
 
 		for(uint8_t column = 0; column < pins.columns_left.size(); column++) {
 			uint8_t column_pin = pins.columns_left[column];
 			i2c_reg_write_byte(i2c.get(), left_i2c_id, 0x00, ~(1 << column_pin)); // set current column to output
-			i2c_reg_write_byte(i2c.get(), left_i2c_id, 0x12, ~(1 << column_pin)); // drive current column pin low
 
 			uint8_t value = 255;
 			i2c_reg_read_byte(i2c.get(), left_i2c_id, 0x13, &value); // read port B (rows)
@@ -64,9 +69,9 @@ std::vector<std::pair<uint8_t, uint8_t>> KeyboardMatrixScanner::scan_left() {
 					pressed_keys.push_back(std::make_pair(row, column));
 				}
 			}
-
-			i2c_reg_write_byte(i2c.get(), left_i2c_id, 0x00, 0xFF); // set columns to input again
 		}
+	} else {
+		i2c_initialised = false;
 	}
 
 	return pressed_keys;
