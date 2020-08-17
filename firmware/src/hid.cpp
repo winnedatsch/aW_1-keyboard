@@ -49,13 +49,13 @@ static struct hids_report input = {
 	.type = HIDS_INPUT,
 };
 
-// static struct hids_report output = {
-// 	.id = 0x01,
-// 	.type = HIDS_OUTPUT,
-// };
+static struct hids_report output = {
+	.id = 0x01,
+	.type = HIDS_OUTPUT,
+};
 
 static uint8_t protocol_mode = 0x01; // default to protocol mode
-//static uint8_t leds = 0b00000000;
+static uint8_t leds = 0b00000000;
 static uint8_t ctrl_point;
 static uint8_t report_map[] = {
 	0x05, 0x01,       // Usage Page (Generic Desktop)
@@ -112,6 +112,23 @@ static ssize_t read_report_map(struct bt_conn *conn,
 {
 	return bt_gatt_attr_read(conn, attr, buf, len, offset, report_map,
 				 sizeof(report_map));
+}
+
+static ssize_t read_input_report(struct bt_conn *conn,
+			   const struct bt_gatt_attr *attr, void *buf,
+			   uint16_t len, uint16_t offset)
+{
+	return bt_gatt_attr_read(conn, attr, buf, len, offset, attr->user_data,
+				 sizeof(struct hids_report));
+}
+
+
+static ssize_t read_output_report(struct bt_conn *conn,
+			   const struct bt_gatt_attr *attr, void *buf,
+			   uint16_t len, uint16_t offset)
+{
+	return bt_gatt_attr_read(conn, attr, buf, len, offset, attr->user_data,
+				 sizeof(struct hids_report));
 }
 
 static void input_ccc_changed(const struct bt_gatt_attr *attr, uint16_t value)
@@ -173,14 +190,14 @@ BT_GATT_SERVICE_DEFINE(hid_keyboard_service,
 		BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
 	BT_GATT_DESCRIPTOR(BT_UUID_HIDS_REPORT_REF, 
         BT_GATT_PERM_READ,
-		NULL, NULL, &input),
-    // BT_GATT_CHARACTERISTIC(BT_UUID_HIDS_REPORT,
-	// 	BT_GATT_CHRC_READ | BT_GATT_CHRC_WRITE | BT_GATT_CHRC_WRITE_WITHOUT_RESP,
-	// 	BT_GATT_PERM_READ_ENCRYPT | BT_GATT_PERM_WRITE_ENCRYPT,
-	// 	NULL, NULL, &leds),
-	// BT_GATT_DESCRIPTOR(BT_UUID_HIDS_REPORT_REF, 
-    //     BT_GATT_PERM_READ,
-	// 	NULL, NULL, &output),
+		read_input_report, NULL, &input),
+    BT_GATT_CHARACTERISTIC(BT_UUID_HIDS_REPORT,
+		BT_GATT_CHRC_READ | BT_GATT_CHRC_WRITE | BT_GATT_CHRC_WRITE_WITHOUT_RESP,
+		BT_GATT_PERM_READ_ENCRYPT | BT_GATT_PERM_WRITE_ENCRYPT,
+		NULL, NULL, &leds),
+	BT_GATT_DESCRIPTOR(BT_UUID_HIDS_REPORT_REF, 
+        BT_GATT_PERM_READ,
+		read_output_report, NULL, &output),
     BT_GATT_CHARACTERISTIC(BT_UUID_HIDS_REPORT_MAP, 
         BT_GATT_CHRC_READ, 
         BT_GATT_PERM_READ_ENCRYPT, 
