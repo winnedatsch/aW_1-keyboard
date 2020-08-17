@@ -49,7 +49,13 @@ static struct hids_report input = {
 	.type = HIDS_INPUT,
 };
 
-static uint8_t simulate_input;
+// static struct hids_report output = {
+// 	.id = 0x01,
+// 	.type = HIDS_OUTPUT,
+// };
+
+static uint8_t protocol_mode = 0x01; // default to protocol mode
+//static uint8_t leds = 0b00000000;
 static uint8_t ctrl_point;
 static uint8_t report_map[] = {
 	0x05, 0x01,       // Usage Page (Generic Desktop)
@@ -67,7 +73,7 @@ static uint8_t report_map[] = {
 
     0x95, 0x01,       // Report Count (1)
     0x75, 0x08,       // Report Size (8)
-    0x81, 0x03,       // Input (Constant) reserved byte(1)
+    0x81, 0x01,       // Input (Constant) reserved byte(1)
 
     0x95, 0x05,       // Report Count (5)
     0x75, 0x01,       // Report Size (1)
@@ -77,7 +83,7 @@ static uint8_t report_map[] = {
     0x91, 0x02,       // Output (Data, Variable, Absolute), Led report
     0x95, 0x01,       // Report Count (1)
     0x75, 0x03,       // Report Size (3)
-    0x91, 0x03,       // Output (Data, Variable, Absolute), Led report padding
+    0x91, 0x01,       // Output (Constant), Led report padding
 
     0x95, 0x06,       // Report Count (6)
     0x75, 0x08,       // Report Size (8)
@@ -108,17 +114,14 @@ static ssize_t read_report_map(struct bt_conn *conn,
 				 sizeof(report_map));
 }
 
-static ssize_t read_report(struct bt_conn *conn,
-			   const struct bt_gatt_attr *attr, void *buf,
-			   uint16_t len, uint16_t offset)
-{
-	return bt_gatt_attr_read(conn, attr, buf, len, offset, attr->user_data,
-				 sizeof(struct hids_report));
-}
-
 static void input_ccc_changed(const struct bt_gatt_attr *attr, uint16_t value)
 {
-	simulate_input = (value == BT_GATT_CCC_NOTIFY) ? 1 : 0;
+	printk("Input CCC changed: notify %s\n", (value == BT_GATT_CCC_NOTIFY) ? "true" : "false");
+}
+
+static void boot_input_ccc_changed(const struct bt_gatt_attr *attr, uint16_t value)
+{
+	printk("Boot Input CCC changed: notify %s\n", (value == BT_GATT_CCC_NOTIFY) ? "true" : "false");
 }
 
 static ssize_t write_ctrl_point(struct bt_conn *conn,
@@ -137,26 +140,67 @@ static ssize_t write_ctrl_point(struct bt_conn *conn,
 	return len;
 }
 
+static ssize_t write_protocol_mode(struct bt_conn *conn,
+				const struct bt_gatt_attr *attr,
+				const void *buf, uint16_t len, uint16_t offset,
+				uint8_t flags)
+{
+	uint8_t *value = static_cast<uint8_t*>(attr->user_data);
+
+	if (offset + len > sizeof(protocol_mode)) {
+		return BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
+	}
+
+	memcpy(value + offset, buf, len);
+
+    printk("Updating protocol_mode to %X\n", buf);
+
+	return len;
+}
+
 /* HID Service Declaration */
 BT_GATT_SERVICE_DEFINE(hid_keyboard_service,
 	BT_GATT_PRIMARY_SERVICE(BT_UUID_HIDS),
-	BT_GATT_CHARACTERISTIC(BT_UUID_HIDS_INFO, 
-        BT_GATT_CHRC_READ, 
-        BT_GATT_PERM_READ, 
-        read_info, NULL, &info),
-	BT_GATT_CHARACTERISTIC(BT_UUID_HIDS_REPORT_MAP, 
-        BT_GATT_CHRC_READ, 
-        BT_GATT_PERM_READ, 
-        read_report_map, NULL, NULL),
+    BT_GATT_CHARACTERISTIC(BT_UUID_HIDS_PROTOCOL_MODE,
+        BT_GATT_CHRC_READ | BT_GATT_CHRC_WRITE_WITHOUT_RESP,
+        BT_GATT_PERM_NONE,
+        NULL, write_protocol_mode, &protocol_mode),
 	BT_GATT_CHARACTERISTIC(BT_UUID_HIDS_REPORT,
 		BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY,
-		BT_GATT_PERM_READ,
+		BT_GATT_PERM_READ_ENCRYPT,
 		NULL, NULL, NULL),
 	BT_GATT_CCC(input_ccc_changed,
 		BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
 	BT_GATT_DESCRIPTOR(BT_UUID_HIDS_REPORT_REF, 
         BT_GATT_PERM_READ,
-		read_report, NULL, &input),
+		NULL, NULL, &input),
+    // BT_GATT_CHARACTERISTIC(BT_UUID_HIDS_REPORT,
+	// 	BT_GATT_CHRC_READ | BT_GATT_CHRC_WRITE | BT_GATT_CHRC_WRITE_WITHOUT_RESP,
+	// 	BT_GATT_PERM_READ_ENCRYPT | BT_GATT_PERM_WRITE_ENCRYPT,
+	// 	NULL, NULL, &leds),
+	// BT_GATT_DESCRIPTOR(BT_UUID_HIDS_REPORT_REF, 
+    //     BT_GATT_PERM_READ,
+	// 	NULL, NULL, &output),
+    BT_GATT_CHARACTERISTIC(BT_UUID_HIDS_REPORT_MAP, 
+        BT_GATT_CHRC_READ, 
+        BT_GATT_PERM_READ_ENCRYPT, 
+        read_report_map, NULL, NULL),
+    BT_GATT_CHARACTERISTIC(BT_UUID_HIDS_BOOT_KB_IN_REPORT,
+        BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY,
+        BT_GATT_PERM_READ_ENCRYPT,
+        NULL, NULL, NULL
+    ),
+    BT_GATT_CCC(boot_input_ccc_changed,
+		BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
+    BT_GATT_CHARACTERISTIC(BT_UUID_HIDS_BOOT_KB_OUT_REPORT,
+        BT_GATT_CHRC_READ | BT_GATT_CHRC_WRITE | BT_GATT_CHRC_WRITE_WITHOUT_RESP,
+        BT_GATT_PERM_READ_ENCRYPT | BT_GATT_PERM_WRITE_ENCRYPT,
+        NULL, NULL, NULL
+    ),
+    BT_GATT_CHARACTERISTIC(BT_UUID_HIDS_INFO, 
+        BT_GATT_CHRC_READ, 
+        BT_GATT_PERM_READ, 
+        read_info, NULL, &info),
 	BT_GATT_CHARACTERISTIC(BT_UUID_HIDS_CTRL_POINT,
 		BT_GATT_CHRC_WRITE_WITHOUT_RESP,
 		BT_GATT_PERM_WRITE,
@@ -171,15 +215,29 @@ void notify_keycodes(bt_conn *conn, std::vector<uint8_t> keycodes, std::vector<u
     auto last = std::min(keycodes.size(), 5u);
     std::copy(keycodes.begin(), keycodes.begin() + last, data.begin() + 2);
 
-    int err = bt_gatt_notify(conn, &hid_keyboard_service.attrs[6], &data[0], 8);
+    int err = 0;
+    if(protocol_mode == 0x01) {
+        printk("notifying to regular report map attribute\n");
+        err = bt_gatt_notify(conn, &hid_keyboard_service.attrs[4], &data[0], 8);
+    } else {
+        printk("notifying to boot report map attribute\n");
+        err = bt_gatt_notify(conn, &hid_keyboard_service.attrs[10], &data[0], 8);
+    }
+
     if(err) {
-        printk("notify failed!");
+        printk("notify failed!\n");
     }
 }
 
 void notify_keyrelease(bt_conn *conn) {
     uint8_t keyrelease_data[8] = {0x00};
-    bt_gatt_notify(conn, &hid_keyboard_service.attrs[6], &keyrelease_data, 8);
+    if(protocol_mode == 0x01) {
+        printk("notifying to regular report map attribute\n");
+        bt_gatt_notify(conn, &hid_keyboard_service.attrs[4], &keyrelease_data, 8);
+    } else {
+        printk("notifying to boot report map attribute\n");
+        bt_gatt_notify(conn, &hid_keyboard_service.attrs[10], &keyrelease_data, 8);
+    }
 }
 
 uint8_t convert_modifiers_to_bitmask(std::vector<uint8_t> modifiers) {

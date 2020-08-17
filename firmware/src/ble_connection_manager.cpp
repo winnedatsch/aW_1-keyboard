@@ -90,6 +90,20 @@ namespace {
         printk("Connection parameters for %s changed: interval %d, latency %d, timeout %d\n", addr, interval, latency, timeout);
     }
 
+    void pairing_complete(struct bt_conn *conn, bool bonded) {
+        char addr[BT_ADDR_LE_STR_LEN];
+        bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+        printk("Pairing for %s completed (bonded: %s)\n", addr, bonded ? "true" : "false");
+    }
+
+    void pairing_failed(struct bt_conn *conn, enum bt_security_err reason) {
+        char addr[BT_ADDR_LE_STR_LEN];
+        bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+
+        printk("Pairing for %s failed (error code: %d)\n", addr, reason);
+    }
+
     struct bt_conn_cb conn_callbacks {
         .connected = connected,
         .disconnected = disconnected,
@@ -101,7 +115,10 @@ namespace {
         .passkey_display = NULL,
         .passkey_entry = NULL,
         .passkey_confirm = NULL,
-        .pairing_confirm = NULL
+        .cancel = NULL,
+        .pairing_confirm = NULL,
+        .pairing_complete = pairing_complete,
+        .pairing_failed = pairing_failed
     };
 }
 
