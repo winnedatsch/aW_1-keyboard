@@ -1,78 +1,86 @@
 #include "keyboard_matrix_scanner.h"
+
 #include <drivers/gpio.h>
 #include <drivers/i2c.h>
 
-KeyboardMatrixScanner::KeyboardMatrixScanner(std::shared_ptr<device> gpio, std::shared_ptr<device> i2c, uint8_t left_i2c_id,  keyboard_pins pins): 
-gpio{gpio}, i2c{i2c}, left_i2c_id{left_i2c_id}, pins{pins} {
-    for(auto pin : pins.rows_right) {
-		gpio_pin_configure(gpio.get(), pin, GPIO_PULL_UP | GPIO_INPUT);
-	}
+KeyboardMatrixScanner::KeyboardMatrixScanner(std::shared_ptr<device> gpio,
+                                             std::shared_ptr<device> i2c, uint8_t left_i2c_id,
+                                             keyboard_pins pins)
+    : gpio{gpio}, i2c{i2c}, left_i2c_id{left_i2c_id}, pins{pins} {
+    for (auto pin : pins.rows_right) {
+        gpio_pin_configure(gpio.get(), pin, GPIO_PULL_UP | GPIO_INPUT);
+    }
 
-	for(auto pin : pins.columns_right) {
-		gpio_pin_configure(gpio.get(), pin, GPIO_DISCONNECTED);
-	}
+    for (auto pin : pins.columns_right) {
+        gpio_pin_configure(gpio.get(), pin, GPIO_DISCONNECTED);
+    }
 
-	i2c_configure(i2c.get(), I2C_SPEED_SET(I2C_SPEED_FAST));
+    i2c_configure(i2c.get(), I2C_SPEED_SET(I2C_SPEED_FAST));
 }
 
 std::vector<std::pair<uint8_t, uint8_t>> KeyboardMatrixScanner::scan_matrix() {
     std::vector<std::pair<uint8_t, uint8_t>> pressed_keys = scan_right();
     std::vector<std::pair<uint8_t, uint8_t>> pressed_keys_left = scan_left();
-	pressed_keys.insert(std::end(pressed_keys), std::begin(pressed_keys_left), std::end(pressed_keys_left));
+    pressed_keys.insert(std::end(pressed_keys), std::begin(pressed_keys_left),
+                        std::end(pressed_keys_left));
 
     return pressed_keys;
 }
 
 std::vector<std::pair<uint8_t, uint8_t>> KeyboardMatrixScanner::scan_right() {
-	std::vector<std::pair<uint8_t, uint8_t>> pressed_keys;
+    std::vector<std::pair<uint8_t, uint8_t>> pressed_keys;
 
-	for(uint8_t column = 0; column < pins.columns_right.size(); column++) {
-		gpio_pin_configure(gpio.get(), pins.columns_right[column], GPIO_OUTPUT_LOW);
+    for (uint8_t column = 0; column < pins.columns_right.size(); column++) {
+        gpio_pin_configure(gpio.get(), pins.columns_right[column], GPIO_OUTPUT_LOW);
 
-		for(uint8_t row = 0; row < pins.rows_right.size(); row++) {
+        for (uint8_t row = 0; row < pins.rows_right.size(); row++) {
+            if (gpio_pin_get(gpio.get(), pins.rows_right[row]) == 0) {
+                pressed_keys.push_back(std::make_pair(
+                    row, (pins.columns_right.size() - column - 1) + pins.columns_left.size()));
+            }
+        }
 
-			if(gpio_pin_get(gpio.get(), pins.rows_right[row]) == 0) {
-				pressed_keys.push_back(std::make_pair(row, (pins.columns_right.size() - column - 1) + pins.columns_left.size()));
-			}
-		}
+        gpio_pin_configure(gpio.get(), pins.columns_right[column], GPIO_DISCONNECTED);
+    }
 
-		gpio_pin_configure(gpio.get(), pins.columns_right[column], GPIO_DISCONNECTED);
-	}
-
-	return pressed_keys;
+    return pressed_keys;
 }
 
 std::vector<std::pair<uint8_t, uint8_t>> KeyboardMatrixScanner::scan_left() {
-	std::vector<std::pair<uint8_t, uint8_t>> pressed_keys;
+    std::vector<std::pair<uint8_t, uint8_t>> pressed_keys;
 
-	auto err = i2c_reg_write_byte(i2c.get(), left_i2c_id, 0x01, 0xFF); // set port B (rows) to inputs
-	if(err == 0) { // left half is connected
-		if(!i2c_initialised) {
-			i2c_reg_write_byte(i2c.get(), left_i2c_id, 0x0D, 0xFF); // enable port B pull-ups
-			i2c_reg_write_byte(i2c.get(), left_i2c_id, 0x00, 0xFF); // set port A (columns) to inputs
-			i2c_reg_write_byte(i2c.get(), left_i2c_id, 0x0C, 0x00); // disable port A pull-ups
-			i2c_reg_write_byte(i2c.get(), left_i2c_id, 0x12, 0x00); // set output latches of port A
-			i2c_initialised = true;
-		}
+    auto err = i2c_reg_write_byte(i2c.get(), left_i2c_id, 0x05, 0x00);  // reset settings to default
 
-		for(uint8_t column = 0; column < pins.columns_left.size(); column++) {
-			uint8_t column_pin = pins.columns_left[column];
-			i2c_reg_write_byte(i2c.get(), left_i2c_id, 0x00, ~(1 << column_pin)); // set current column to output
+    if (err == 0) {  // left half is connected
+        if (!i2c_initialised) {
+            i2c_reg_write_byte(i2c.get(), left_i2c_id, 0x01, 0xFF);  // set port B (rows) to inputs
+            i2c_reg_write_byte(i2c.get(), left_i2c_id, 0x03, 0xFF);  // invert port B input polarity
+            i2c_reg_write_byte(i2c.get(), left_i2c_id, 0x0D, 0xFF);  // enable port B pull-ups
+            i2c_reg_write_byte(i2c.get(), left_i2c_id, 0x00, 0xFF);  // set port A (cols) to inputs
+            i2c_reg_write_byte(i2c.get(), left_i2c_id, 0x0C, 0x00);  // disable port A pull-ups
+            i2c_reg_write_byte(i2c.get(), left_i2c_id, 0x12, 0x00);  // set output latches of port A
+            i2c_initialised = true;
+        }
 
-			uint8_t value = 255;
-			i2c_reg_read_byte(i2c.get(), left_i2c_id, 0x13, &value); // read port B (rows)
+        for (uint8_t column = 0; column < pins.columns_left.size(); column++) {
+            uint8_t column_pin = pins.columns_left[column];
+            i2c_reg_write_byte(i2c.get(), left_i2c_id, 0x00,
+                               ~(1 << column_pin));  // set current column to output
 
-			for(uint8_t row = 0; row < pins.rows_left.size(); row++) {
-				uint8_t row_pin = pins.rows_left[row];
+            uint8_t value = 255;
+            i2c_reg_read_byte(i2c.get(), left_i2c_id, 0x13, &value);  // read port B (rows)
 
-				if(((value & (1 << row_pin)) >> row_pin) == 0) {
-					pressed_keys.push_back(std::make_pair(row, column));
-				}
-			}
-		}
-	} else {
-		i2c_initialised = false;
-	}
+            for (uint8_t row = 0; row < pins.rows_left.size(); row++) {
+                uint8_t row_pin = pins.rows_left[row];
 
-	return pressed_keys;
+                if (((value & (1 << row_pin)) >> row_pin) == 1) {
+                    pressed_keys.push_back(std::make_pair(row, column));
+                }
+            }
+        }
+    } else {
+        i2c_initialised = false;
+    }
+
+    return pressed_keys;
 }
