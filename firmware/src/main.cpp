@@ -68,10 +68,10 @@ void main(void) {
             }
 
             const auto delta = static_cast<int>(k_uptime_delta(&time_stamp));
-            k_sleep(polling_delay_ms);
+            k_sleep(K_MSEC(polling_delay_ms));
             ms_since_last_battery_report = ms_since_last_battery_report + polling_delay_ms + delta;
         } else {
-            k_sleep(polling_delay_disconnected_ms);
+            k_sleep(K_MSEC(polling_delay_disconnected_ms));
             ms_since_last_battery_report += polling_delay_disconnected_ms;
         }
     }

@@ -10,7 +10,7 @@
 
 / {
 	model = "Hadl aW_1";
-	compatible = "aW_1", "nordic,nrf52832-qfaa", "nordic,nrf52832";
+	compatible = "aW_1";
 
 	chosen {
 		zephyr,console = &uart0;
