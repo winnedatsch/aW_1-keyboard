@@ -7,6 +7,8 @@
 
 void ble_init(std::function<void()> callback = nullptr);
 
-bt_conn* ble_get_connection();
+struct settings_handler *get_paired_conf();
+bt_conn *ble_get_connection();
+void reset_paired_device();
 
 #endif

@@ -41,6 +41,7 @@ const dynamic_matrix<uint8_t> fn_matrix{
 
 const uint8_t battery_reading_pin_analogue = 2;
 const uint16_t expander_i2c = 0x20;
+const uint8_t button_pin = 3;
 
 #endif
 
@@ -61,6 +62,7 @@ const dynamic_matrix<uint8_t> fn_matrix{
 
 const uint8_t battery_reading_pin_analogue = 7;
 const uint16_t expander_i2c = 0x20;
+const uint8_t button_pin = 27;
 
 #endif
 
