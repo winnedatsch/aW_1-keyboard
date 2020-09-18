@@ -11,9 +11,13 @@
 #include <usb_hid_keys.h>
 #include <zephyr.h>
 #include <zephyr/types.h>
+#include <logging/log.h>
 
 #include <array>
 #include <string>
+
+LOG_MODULE_REGISTER(hid);
+
 
 enum {
     HIDS_REMOTE_WAKE = BIT(0),
@@ -99,42 +103,42 @@ static uint8_t report_map[]{
 
 static ssize_t read_hid_info(struct bt_conn* conn, const struct bt_gatt_attr* attr, void* buf,
                              uint16_t len, uint16_t offset) {
-    printk("reading HID info\n");
+    LOG_INF("reading HID info");
     return bt_gatt_attr_read(conn, attr, buf, len, offset, attr->user_data,
                              sizeof(struct hids_info));
 }
 
 static ssize_t read_report_map(struct bt_conn* conn, const struct bt_gatt_attr* attr, void* buf,
                                uint16_t len, uint16_t offset) {
-    printk("reading report map\n");
+    LOG_INF("reading report map");
     return bt_gatt_attr_read(conn, attr, buf, len, offset, report_map, sizeof(report_map));
 }
 
 static ssize_t read_input_report_descriptor(struct bt_conn* conn, const struct bt_gatt_attr* attr,
                                             void* buf, uint16_t len, uint16_t offset) {
-    printk("reading input report descriptor\n");
+    LOG_INF("reading input report descriptor");
     return bt_gatt_attr_read(conn, attr, buf, len, offset, attr->user_data,
                              sizeof(struct hids_report));
 }
 
 static ssize_t read_output_report_descriptor(struct bt_conn* conn, const struct bt_gatt_attr* attr,
                                              void* buf, uint16_t len, uint16_t offset) {
-    printk("reading output report descriptor\n");
+    LOG_INF("reading output report descriptor");
     return bt_gatt_attr_read(conn, attr, buf, len, offset, attr->user_data,
                              sizeof(struct hids_report));
 }
 
 static void input_ccc_changed(const struct bt_gatt_attr* attr, uint16_t value) {
-    printk("Input CCC changed: notify %s\n", (value == BT_GATT_CCC_NOTIFY) ? "true" : "false");
+    LOG_INF("Input CCC changed: notify %s", (value == BT_GATT_CCC_NOTIFY) ? "true" : "false");
 }
 
 static void boot_input_ccc_changed(const struct bt_gatt_attr* attr, uint16_t value) {
-    printk("Boot Input CCC changed: notify %s\n", (value == BT_GATT_CCC_NOTIFY) ? "true" : "false");
+    LOG_INF("Boot Input CCC changed: notify %s", (value == BT_GATT_CCC_NOTIFY) ? "true" : "false");
 }
 
 static ssize_t write_ctrl_point(struct bt_conn* conn, const struct bt_gatt_attr* attr,
                                 const void* buf, uint16_t len, uint16_t offset, uint8_t flags) {
-    printk("writing control point\n");
+    LOG_INF("writing control point");
     uint8_t* value = static_cast<uint8_t*>(attr->user_data);
 
     if (offset + len > sizeof(ctrl_point)) {
@@ -148,13 +152,13 @@ static ssize_t write_ctrl_point(struct bt_conn* conn, const struct bt_gatt_attr*
 
 static ssize_t read_protocol_mode(struct bt_conn* conn, const struct bt_gatt_attr* attr, void* buf,
                                   uint16_t len, uint16_t offset) {
-    printk("reading protocol mode\n");
+    LOG_INF("reading protocol mode");
     return bt_gatt_attr_read(conn, attr, buf, len, offset, attr->user_data, sizeof(protocol_mode));
 }
 
 static ssize_t write_protocol_mode(struct bt_conn* conn, const struct bt_gatt_attr* attr,
                                    const void* buf, uint16_t len, uint16_t offset, uint8_t flags) {
-    printk("writing protocol mode\n");
+    LOG_INF("writing protocol mode");
     uint8_t* value = static_cast<uint8_t*>(attr->user_data);
 
     if (offset + len > sizeof(protocol_mode)) {
@@ -168,19 +172,19 @@ static ssize_t write_protocol_mode(struct bt_conn* conn, const struct bt_gatt_at
 
 static ssize_t read_input_report(struct bt_conn* conn, const struct bt_gatt_attr* attr, void* buf,
                                  uint16_t len, uint16_t offset) {
-    printk("reading input report\n");
+    LOG_INF("reading input report");
     return bt_gatt_attr_read(conn, attr, buf, len, offset, attr->user_data, sizeof(input_report));
 }
 
 static ssize_t read_output_report(struct bt_conn* conn, const struct bt_gatt_attr* attr, void* buf,
                                   uint16_t len, uint16_t offset) {
-    printk("reading output report\n");
+    LOG_INF("reading output report");
     return bt_gatt_attr_read(conn, attr, buf, len, offset, attr->user_data, sizeof(output_report));
 }
 
 static ssize_t write_output_report(struct bt_conn* conn, const struct bt_gatt_attr* attr,
                                    const void* buf, uint16_t len, uint16_t offset, uint8_t flags) {
-    printk("writing output report\n");
+    LOG_INF("writing output report");
     uint8_t* value = static_cast<uint8_t*>(attr->user_data);
 
     if (offset + len > sizeof(protocol_mode)) {
@@ -225,6 +229,7 @@ BT_GATT_SERVICE_DEFINE(
                            BT_GATT_PERM_WRITE, NULL, write_ctrl_point, &ctrl_point));
 
 void notify_keycodes(bt_conn* conn, std::vector<uint8_t> keycodes, std::vector<uint8_t> modifiers) {
+    LOG_INF("notifying %d keys and %d modifiers", keycodes.size(), modifiers.size());
     uint8_t modifiers_bitmask = convert_modifiers_to_bitmask(modifiers);
 
     std::array<uint8_t, 8> data{modifiers_bitmask, 0x00};
@@ -234,25 +239,26 @@ void notify_keycodes(bt_conn* conn, std::vector<uint8_t> keycodes, std::vector<u
 
     int err = 0;
     if (protocol_mode == 0x01) {
-        printk("notifying to regular report map attribute\n");
+        LOG_INF("notifying to regular report map attribute");
         err = bt_gatt_notify(conn, &hid_keyboard_service.attrs[4], &data[0], 8);
     } else {
-        printk("notifying to boot report map attribute\n");
+        LOG_INF("notifying to boot report map attribute");
         err = bt_gatt_notify(conn, &hid_keyboard_service.attrs[13], &data[0], 8);
     }
 
     if (err) {
-        printk("notify failed!\n");
+        LOG_ERR("notify failed!");
     }
 }
 
 void notify_keyrelease(bt_conn* conn) {
+    LOG_INF("notifying keyrelease");
     uint8_t keyrelease_data[8] = {0x00};
     if (protocol_mode == 0x01) {
-        printk("notifying to regular report map attribute\n");
+        LOG_INF("notifying to regular report map attribute");
         bt_gatt_notify(conn, &hid_keyboard_service.attrs[4], &keyrelease_data, 8);
     } else {
-        printk("notifying to boot report map attribute\n");
+        LOG_INF("notifying to boot report map attribute");
         bt_gatt_notify(conn, &hid_keyboard_service.attrs[13], &keyrelease_data, 8);
     }
 }

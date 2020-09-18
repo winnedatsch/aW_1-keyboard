@@ -17,6 +17,9 @@
  */
 
 #include "battery_reader.h"
+#include <logging/log.h>
+LOG_MODULE_REGISTER(battery_reader);
+
 
 BatteryReader::BatteryReader(std::shared_ptr<device> adc_device, uint16_t ref_voltage,
                              uint16_t min_voltage, uint16_t max_voltage, uint8_t sense_pin,
@@ -35,9 +38,9 @@ BatteryReader::BatteryReader(std::shared_ptr<device> adc_device, uint16_t ref_vo
                      .input_positive = (uint8_t)(sense_pin + 1)} {
     int error = adc_channel_setup(adc_device.get(), &channel_config);
     if (error) {
-        printk("ADC setup failed\n");
+        LOG_ERR("ADC setup failed");
     } else {
-        printk("ADC setup succeeded\n");
+        LOG_INF("ADC setup succeeded");
     }
 }
 
@@ -67,11 +70,11 @@ uint16_t BatteryReader::voltage() {
     int error = adc_read(adc_device.get(), &sequence);
 
     if (error) {
-        printk("ADC sampling failed\n");
+        LOG_ERR("ADC sampling failed");
         return 0;
     } else {
         uint16_t reading = this->sample_buffer * divider_ratio * ref_voltage / 1024;
-        printk("Battery reading: %umV\n", reading);
+        LOG_INF("Battery reading: %umV", reading);
         return reading;
     }
 }

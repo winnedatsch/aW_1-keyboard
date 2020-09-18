@@ -4,6 +4,8 @@
 
 #include <algorithm>
 #include <stdexcept>
+#include <logging/log.h>
+LOG_MODULE_REGISTER(keys);
 
 KeycodeResolver::KeycodeResolver(dynamic_matrix<uint8_t> keycode_matrix,
                                  dynamic_matrix<uint8_t> fn_matrix)
@@ -51,7 +53,7 @@ keycodes KeycodeResolver::resolve_keycodes(std::vector<std::pair<uint8_t, uint8_
                 keycodes.push_back(keycode);
             }
         } catch (const std::out_of_range&) {
-            printk("Key position is not defined in matrix");
+            LOG_ERR("Key position is not defined in matrix");
         }
     }
 

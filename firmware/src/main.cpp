@@ -7,6 +7,7 @@
 #include <drivers/i2c.h>
 #include <settings/settings.h>
 #include <zephyr.h>
+#include <logging/log.h>
 
 #include <memory>
 #include <string>
@@ -18,6 +19,8 @@
 #include "hid.h"
 #include "keyboard_matrix_scanner.h"
 #include "keycode_resolver.h"
+
+LOG_MODULE_REGISTER(main);
 
 namespace {
 const uint8_t polling_delay_ms = 5;
@@ -59,7 +62,7 @@ void main(void) {
         if (ms_since_last_battery_report > battery_reporting_interval_ms) {
             uint8_t battery_level_stepped_5 =
                 static_cast<uint8_t>(round(battery_reader->level() / 5.0) * 5.0);
-            printk("Battery level (rounded): %d%%\n", battery_level_stepped_5);
+            LOG_INF("Battery level (rounded): %d%%", battery_level_stepped_5);
             bt_gatt_bas_set_battery_level(battery_level_stepped_5);
             ms_since_last_battery_report = 0;
         }
@@ -67,7 +70,7 @@ void main(void) {
         auto reset_connections_pressed = gpio_pin_get(gpio0.get(), button_pin) == 0;
         if (reset_connections_pressed) {
             if (button_debounce == 0) {
-                printk("pressed reset pairing button\n");
+                LOG_INF("pressed reset pairing button");
                 reset_paired_device();
             }
             button_debounce = 500;
@@ -81,10 +84,8 @@ void main(void) {
 
             if (pressed_keys != previous_keys) {
                 if (pressed_keys.size() > 0) {
-                    printk("notifying %d keypresses\n", pressed_keys.size());
                     notify_keycodes(ble_connection, keycodes.keycodes, keycodes.modifiers);
                 } else {
-                    printk("notifying keyrelease\n");
                     notify_keyrelease(ble_connection);
                 }
                 previous_keys = std::move(pressed_keys);
