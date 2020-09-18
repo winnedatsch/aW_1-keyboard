@@ -1,8 +1,9 @@
 #ifndef HID
 #define HID
 
-#include <vector>
 #include <bluetooth/conn.h>
+
+#include <vector>
 
 void hid_init(void);
 
