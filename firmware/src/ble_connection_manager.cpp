@@ -22,8 +22,8 @@ const struct bt_data advertising_data[] = {
 const bt_le_adv_param advertising_parameters{
     .id = BT_ID_DEFAULT,
     .options = BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_USE_NAME,
-    .interval_min = BT_GAP_ADV_FAST_INT_MIN_2,
-    .interval_max = BT_GAP_ADV_FAST_INT_MAX_2};
+    .interval_min = BT_GAP_ADV_FAST_INT_MIN_1,
+    .interval_max = BT_GAP_ADV_FAST_INT_MAX_1};
 std::function<void()> init_callback = nullptr;
 static struct k_work advertise_work;
 
