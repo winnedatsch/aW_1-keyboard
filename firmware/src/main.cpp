@@ -23,7 +23,7 @@
 LOG_MODULE_REGISTER(main);
 
 namespace {
-const uint8_t polling_delay_ms = 5;
+const uint8_t polling_delay_ms = 2;
 const uint16_t polling_delay_disconnected_ms = 200;
 std::vector<std::pair<uint8_t, uint8_t>> previous_keys;
 
