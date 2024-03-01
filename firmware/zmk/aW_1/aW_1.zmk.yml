@@ -1,0 +1,10 @@
+file_format: "1"
+id: aW_1
+name: aW_1 Keyboard
+type: board
+arch: arm
+features:
+  - keys
+outputs:
+  - ble
+url: https://github.com/winnedatsch/aW_1-keyboard

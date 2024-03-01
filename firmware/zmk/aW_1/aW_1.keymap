@@ -1,0 +1,37 @@
+/*
+ * Copyright (c) 2020 The ZMK Contributors
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/bt.h>
+
+#define FUNC_L 1
+
+/ {
+    keymap {
+        compatible = "zmk,keymap";
+
+        default_layer {
+            bindings = <
+                &kp ESC     &kp N1       &kp N2       &kp N3       &kp N4   &kp N5       &kp GRAV        &kp BSPC    &kp N6       &kp N7   &kp N8       &kp N9       &kp N0       &kp MINUS
+                &kp TAB     &kp Q       &kp W       &kp E       &kp R   &kp T       &kp FSLH        &kp LBKT    &kp Y       &kp U   &kp I       &kp O       &kp P       &kp EQUAL
+                &kp ENTER   &kp A       &kp S       &kp D       &kp F   &kp G                                   &kp H       &kp J   &kp K       &kp L       &kp SEMI    &kp APOS
+                &kp LSHIFT  &kp Z       &kp X       &kp C       &kp V   &kp B       &kp BSLH        &kp RBKT    &kp N       &kp M   &kp COMMA   &kp DOT     &kp UP      &kp RSHIFT
+                &kp LCTRL   &kp LALT    &kp LMETA   &mo FUNC_L  &kp INS &kp SPACE                               &kp SPACE   &kp DEL &kp RALT    &kp LEFT    &kp DOWN    &kp RIGHT
+            >;
+        };
+
+        func_layer {
+            bindings = <
+                &trans  &kp F1  &kp F2  &kp F3      &kp F4  &kp F5  &kp K_MUTE          &kp K_PLAY_PAUSE    &kp F6      &kp F7  &kp F8  &kp F9          &kp F10     &kp F11
+                &trans  &trans  &trans  &trans      &trans  &trans  &kp K_VOL_UP        &kp K_NEXT          &trans      &trans  &trans  &trans          &trans      &kp F12
+                &trans  &trans  &trans  &trans      &trans  &trans                                          &trans      &trans  &trans  &trans          &trans      &trans
+                &trans  &trans  &trans  &trans      &trans  &trans  &kp K_VOL_DN        &kp K_PREV          &trans      &trans  &trans  &trans          &trans      &trans
+                &trans  &trans  &trans  &mo FUNC_L  &trans  &trans                                          &trans      &trans  &trans  &bt BT_SEL 0    &bt BT_CLR  &bt BT_SEL 1
+            >;
+        };
+    };
+};

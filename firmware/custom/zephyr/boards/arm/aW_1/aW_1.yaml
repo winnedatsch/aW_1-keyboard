@@ -1,0 +1,10 @@
+identifier: aW_1
+name: aW_1
+type: mcu
+arch: arm
+toolchain:
+  - zephyr
+  - gnuarmemb
+  - xtools
+ram: 64
+flash: 512

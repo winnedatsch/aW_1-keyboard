@@ -1,0 +1,17 @@
+# aW_1 board configuration
+
+if BOARD_AW_1
+
+config BOARD
+	default "aW_1"
+
+config BT_CTLR
+	default BT
+
+config ZMK_KEYBOARD_NAME
+    default "aW_1"
+
+config ZMK_KSCAN_MATRIX_POLLING
+    default y
+
+endif # BOARD_AW_1
